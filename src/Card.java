@@ -4,6 +4,10 @@ public class Card {
 
 	private Suit suit;
 
+	public Card() {
+
+	}
+
 	public Rank rank() {
 		return rank;
 	}

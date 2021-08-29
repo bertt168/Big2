@@ -1,15 +1,20 @@
-public abstract class CardPattern extends Card {
+import java.util.ArrayList;
+import java.util.List;
 
-	CardPattern(Rank rank, Suit suit) {
-		super(rank, suit);
+public abstract class CardPattern {
+
+	public List<Card> cards = new ArrayList<>();
+
+	public void setCards(List<Card> c) {
+		this.cards = c;
 	}
 
-	public abstract boolean hasPlum3(Card[] releasedCards);
+	public abstract String getName();
 
-	public abstract boolean isLegal(Card[] releasedCards);
+	public abstract boolean isLegal(List<Card> currentPlay);
 
-	public abstract boolean isSamePattern(CardPattern releasedCards, CardPattern topPlay);
+	public abstract void isSamePattern(CardPattern topPlay);
 
-	public abstract boolean compareToCardPattern(CardPattern released, CardPattern topPlay);
+	public abstract void compareToCardPattern(CardPattern topPlay);
 
 }

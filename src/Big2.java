@@ -5,37 +5,42 @@ import java.util.Scanner;
 public class Big2 {
 
     public static final int PLAYER_SIZE = 4;
+    public static boolean noWinner = true;
 
     private Deck deck = new Deck();
 
     private final List<Player> players = new ArrayList<Player>();
 
-    private Round round = new Round();
-
     public static CardPattern topPlay;
 
     public static Player topPlayer;
-
-    public boolean noWinner = true;
 
     Scanner scanner = new Scanner(System.in);
 
     public Big2() {
     }
 
+    public static void setTopPlay(CardPattern cp) {
+        topPlay = cp;
+    }
+
+    public static void setTopPlayer(Player currentPlayer) {
+        topPlayer = currentPlayer;
+    }
+
     public void startGame() {
         deck.shuffle();
         createPlayerList();
         dealing();
-        startRound(players);
-//        while(noWinner){
-//            startRound(players);
-//        }
+        while(noWinner){
+            startRound(players);
+        }
+        endGame();
     }
 
     private void startRound(List<Player> players) {
+        Round round = new Round();
         round.start(players);
-
     }
 
     private void dealing() {
@@ -43,32 +48,24 @@ public class Big2 {
             Player player = players.get(i % PLAYER_SIZE);
             player.handCard.cards.add(deck.cards.get(i-1));
             if (deck.cards.get(i-1).suit().equals(Suit.C) && deck.cards.get(i-1).rank().equals(Rank.THREE)) {
-                player.hasSpade3inHandCard = true;
+                player.hasSpade3 = true;
             }
         }
-
-//        for (int i = 0; i < players.size(); i++) {
-//            Player player = players.get(i);
-//            for (Card card : player.handCard.cards) {
-//                System.out.print("<" +  card.suit() + ">" + "[<" + card.rank().getValue() + ">]  ");
-//            }
-//            System.out.println();
-//        }
-
     }
 
     private void createPlayerList() {
         for (int i = 0; i < PLAYER_SIZE; i++) {
             Player player = new Player();
 			System.out.println("What is the Player'" + (i+1) + "s name?");
-			player.name = scanner.next();
-			player.id = i;
+			player.name = scanner.nextLine();
+			player.playerId = i;
             players.add(player);
         }
     }
 
     public void endGame() {
-
+        System.out.println();
+        System.out.println("Game over, the winner is <" + topPlayer.name + ">.");
     }
 
 }

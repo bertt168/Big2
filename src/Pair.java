@@ -1,27 +1,39 @@
+import java.util.List;
+
 public class Pair extends CardPattern {
-	private Card[] cards;
 
-	Pair(Rank rank, Suit suit) {
-		super(rank, suit);
+	@Override
+	public String getName() {
+		return "Pair";
 	}
 
 	@Override
-	public boolean hasPlum3(Card[] releasedCards) {
-		return false;
+	public boolean isLegal(List<Card> currentPlay) {
+		if (currentPlay.size() != 2)
+			return false;
+		else {
+			int rankCompare = currentPlay.get(0).rank().compareTo(currentPlay.get(1).rank());
+			return (rankCompare == 0);
+		}
 	}
 
 	@Override
-	public boolean isLegal(Card[] releasedCards) {
-		return false;
+	public void isSamePattern(CardPattern topPlay) {
+		if (!(topPlay instanceof Pair) && topPlay != null) {
+			throw new RuntimeException();
+		}
 	}
 
 	@Override
-	public boolean isSamePattern(CardPattern releasedCards, CardPattern topPlay) {
-		return false;
-	}
-
-	@Override
-	public boolean compareToCardPattern(CardPattern released, CardPattern topPlay) {
-		return false;
+	public void compareToCardPattern(CardPattern topPlay) {
+		int rankCompare = cards.get(1).rank().compareTo(topPlay.cards.get(1).rank());
+		int suitCompare = cards.get(1).suit().compareTo(topPlay.cards.get(1).suit());
+		if (rankCompare > 0) {
+			return;
+		}else if (rankCompare == 0 && suitCompare > 0) {
+			return;
+		}else {
+			throw new RuntimeException();
+		}
 	}
 }

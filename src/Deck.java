@@ -6,20 +6,6 @@ public class Deck {
 	public int FULL_DECK_SIZE = 52;
 	public List<Card> cards  = new ArrayList<Card>();
 
-	private boolean isEmpty;
-
-	public HandCard prepareHandCards() {
-		return null;
-	}
-
-	public void addReleasedCards(Card[] cards) {
-
-	}
-
-	public boolean isDeckEmpty() {
-		return false;
-	}
-
 	public void shuffle() {
 		for (Suit suit : Suit.values())
 			for (Rank rank : Rank.values())

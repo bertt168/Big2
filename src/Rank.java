@@ -11,4 +11,8 @@ public enum Rank {
     public String getValue() {
         return this.value;
     }
+
+    public Rank getNext() {
+        return values()[(ordinal() + 1) % values().length];
+    }
 }
