@@ -5,11 +5,9 @@ public abstract class CardPattern {
 
 	public List<Card> cards = new ArrayList<>();
 
-	public void setCards(List<Card> c) {
-		this.cards = c;
-	}
-
-	public abstract String getName();
+	public String getName() {
+		return getClass().getSimpleName();
+	};
 
 	public abstract boolean isLegal(List<Card> currentPlay);
 

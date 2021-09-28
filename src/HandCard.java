@@ -9,8 +9,15 @@ public class HandCard {
         Collections.sort(cards, (a1, a2) -> a1.compareTo(a2));
     }
 
+    public void addHandCard(Card card) {
+        cards.add(card);
+    }
+
     public void updateHandCard(List<Card> currentPlay) {
-        for (Card c : currentPlay)
-            cards.remove(c);
+        cards.removeAll(currentPlay);
+    }
+
+    public boolean isEmpty() {
+        return cards.isEmpty();
     }
 }

@@ -1,53 +1,56 @@
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class FullHouse extends CardPattern {
 
-	public List<Card> cards = new ArrayList<>();
+    private final int TWO_KINDS_OF_RANK = 2;
+    private final long THREE_OF_A_KIND = 3;
+    private List<Rank> rankList = new ArrayList<Rank>();
+    private Map<Object, Long> countedDup;
 
-	@Override
-	public String getName() {
-		return "FullHouse";
-	}
+    @Override
+    public boolean isLegal(List<Card> currentPlay) {
+        if (currentPlay.size() != 5)
+            return false;
+        else {
+            setRankList(currentPlay);
+            countedDup = rankList.stream()
+                    .collect(Collectors.groupingBy(r -> r, Collectors.counting()));
+            if (countedDup.size() == TWO_KINDS_OF_RANK && isThreeOfAKind()) {
+                return true;
+            }
+        }
+        return true;
+    }
 
-	@Override
-	public boolean isLegal(List<Card> currentPlay) {
-		if (currentPlay.size() != 5)
-			return false;
-		else {
-			Collections.sort(currentPlay, (a1, a2) -> a1.compareTo(a2));
-			Card middleCard = currentPlay.get(2);
-			if (currentPlay.get(0).equals(middleCard)) {
-				if (currentPlay.get(1).equals(middleCard) && currentPlay.get(3).rank().equals(currentPlay.get(4).rank())) {
-					return true;
-				} else {
-					throw new RuntimeException();
-				}
-			} else {
-				if (currentPlay.get(3).equals(middleCard) && currentPlay.get(0).rank().equals(currentPlay.get(1).rank())) {
-					return true;
-				} else {
-					throw new RuntimeException();
-				}
-			}
+	private boolean isThreeOfAKind() {
+		for (Object r : countedDup.keySet()) {
+			if (countedDup.get(r).equals(THREE_OF_A_KIND))
+				return true;
 		}
+		return false;
 	}
 
-	@Override
-	public void isSamePattern(CardPattern topPlay) {
-		if (!(topPlay instanceof FullHouse) && topPlay != null) {
-			throw new RuntimeException();
-		}
-	}
+	private void setRankList(List<Card> currentPlay) {
+        for (Card c : currentPlay) {
+            rankList.add(c.rank());
+        }
+    }
 
-	@Override
-	public void compareToCardPattern(CardPattern topPlay) {
-		int rankCompare = cards.get(2).rank().compareTo(topPlay.cards.get(2).rank());
-		if (rankCompare > 0)
-			return;
-		else {
-			throw new RuntimeException();
-		}
-	}
+    @Override
+    public void isSamePattern(CardPattern topPlay) {
+        if (getClass() != topPlay.getClass()) {
+            throw new RuntimeException();
+        }
+    }
+
+    @Override
+    public void compareToCardPattern(CardPattern topPlay) {
+        Rank topPlayMiddleCardRank = topPlay.cards.get(2).rank();
+        Rank currentPlayMiddleCardRank = cards.get(2).rank();
+
+        int rankCompare = currentPlayMiddleCardRank.compareTo(topPlayMiddleCardRank);
+        if (rankCompare <= 0)
+            throw new RuntimeException();
+    }
 }

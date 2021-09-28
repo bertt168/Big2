@@ -4,21 +4,13 @@ import java.util.List;
 public class Single extends CardPattern {
 
 	@Override
-	public String getName() {
-		return "Single";
-	}
-
-	@Override
 	public boolean isLegal(List<Card> currentPlay) {
-		if (currentPlay.size() == 1)
-			return true;
-		else
-			return false;
+		return currentPlay.size() == 1;
 	}
 
 	@Override
 	public void isSamePattern(CardPattern topPlay) {
-		if (!(topPlay instanceof Single) && topPlay != null) {
+		if (getClass() != topPlay.getClass()) {
 			throw new RuntimeException();
 		}
 	}

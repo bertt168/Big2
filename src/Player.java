@@ -9,18 +9,25 @@ public class Player {
     private CardPattern currentPattern;
     Scanner scanner = new Scanner(System.in);
 
+    public Player(int id, String name) {
+        this.playerId = id;
+        this.name = name;
+    }
+
     private boolean doCheck(String[] arrayOfCardsId, boolean isNewRound) {
         try {
             List<String> idList = Arrays.asList(arrayOfCardsId);
             List<Card> currentPlay = new ArrayList<>();
             List<Integer> tempCardIds = new ArrayList<>();
-            isId(idList, tempCardIds);
-            isUniqueAndInRange(tempCardIds);
+            checkIdListAllOfInteger(idList, tempCardIds);
+            checkIdListIsUniqueAndInRange(tempCardIds);
             setCurrentPlay(tempCardIds, currentPlay);
-            isLegalCardPattern(currentPlay);
+            validateCurrentPlay(currentPlay);
+
             if (Big2.topPlay == null && isNewRound) {
                 isCardPatternHasSpade3();
-            }else if (!isNewRound) {
+            }
+            if (!isNewRound) {
                 currentPattern.isSamePattern(Big2.topPlay);
                 currentPattern.compareToCardPattern(Big2.topPlay);
             }
@@ -33,12 +40,14 @@ public class Player {
     }
 
     private void isCardPatternHasSpade3() {
+        boolean hasSpade3 = false;
         for (Card c : currentPattern.cards) {
             if (c.suit().equals(Suit.C) && c.rank().equals(Rank.THREE)){
-                return;
+                hasSpade3 = true;
             }
         }
-        throw new RuntimeException();
+        if (hasSpade3 == false)
+            throw new RuntimeException();
     }
 
     private void setCurrentPlay(List<Integer> tempCardIds, List<Card> currentPlay) {
@@ -47,9 +56,16 @@ public class Player {
         }
     }
 
-    private void isLegalCardPattern(List<Card> currentPlay) throws Exception {
+    private void validateCurrentPlay(List<Card> currentPlay) {
         CardPattern s;
         boolean islegal;
+        s = new FullHouse();
+        islegal = s.isLegal(currentPlay);
+        if (islegal) {
+            currentPattern = s;
+            currentPattern.cards = currentPlay;
+            return;
+        }
         s = new Single();
         islegal = s.isLegal(currentPlay);
         if (islegal) {
@@ -71,29 +87,19 @@ public class Player {
             currentPattern.cards = currentPlay;
             return;
         }
-
-        s = new FullHouse();
-        islegal = s.isLegal(currentPlay);
-        if (islegal) {
-            currentPattern = s;
-            currentPattern.cards = currentPlay;
-            return;
-        }
-        throw new Exception();
+        throw new RuntimeException();
     }
 
-    private void isUniqueAndInRange(List<Integer> tempCardIds) throws Exception {
+    private void checkIdListIsUniqueAndInRange(List<Integer> tempCardIds) {
         Set<Integer> set = new HashSet<>();
         int maxId = handCard.cards.size() - 1;
         for (int i : tempCardIds) {
-            if (!set.add(i))
-                throw new Exception();
-            if (i > maxId)
-                throw new Exception();
+            if (!set.add(i) || (i > maxId))
+                throw new RuntimeException();
         }
     }
 
-    private void isId(List<String> idList, List<Integer> tempCardIds) {
+    private void checkIdListAllOfInteger(List<String> idList, List<Integer> tempCardIds) {
         for (String s : idList) {
             int id = Integer.parseInt(s);
             tempCardIds.add(id);
@@ -101,27 +107,37 @@ public class Player {
     }
 
     public Action makeAction(boolean isNewRound) {
-        Play play = new Play();
         Pass pass = new Pass();
         boolean making = true;
-        boolean isLegal;
-        String[] idArray;
         System.out.println("print the card's id(s) to play or print -1 to pass.");
         while (making) {
             String action = scanner.nextLine();
-            if (action.equals(PASS) && isNewRound)
-                System.out.println("You can’t pass in the new round.");
-            else if (action.equals(PASS))
-                return pass;
-            else {
-                idArray = action.split("\\s+");
-                isLegal = doCheck(idArray, isNewRound);
-                if (isLegal) {
-                    making = false;
-                }
+            switch (action) {
+                case PASS:
+                    if(canPass(isNewRound)) {
+                        return pass;
+                    }
+                    break;
+                default:
+                    making = checkPlayerInput(action, isNewRound);
             }
         }
-        play.setCardPattern(currentPattern);
+
+        Play play = new Play(currentPattern);
         return play;
+    }
+
+    private boolean canPass(boolean isNewRound) {
+        if (isNewRound) {
+            System.out.println("You can not pass in the new round.");
+        }
+        return !isNewRound;
+    }
+
+    private boolean checkPlayerInput(String action, boolean isNewRound) {
+        String[] idArray = action.split("\\s+");
+        boolean isLegal = doCheck(idArray, isNewRound);
+        boolean reMakeAction = !isLegal;
+        return reMakeAction;
     }
 }

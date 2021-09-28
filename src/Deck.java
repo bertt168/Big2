@@ -4,12 +4,15 @@ import java.util.List;
 
 public class Deck {
 	public int FULL_DECK_SIZE = 52;
-	public List<Card> cards  = new ArrayList<Card>();
+	public List<Card> cards  = new ArrayList<Card>(FULL_DECK_SIZE);
 
-	public void shuffle() {
+	public Deck() {
 		for (Suit suit : Suit.values())
 			for (Rank rank : Rank.values())
 				cards.add(new Card(rank, suit));
+	}
+
+	public void shuffle() {
 		Collections.shuffle(cards);
 
 		// show deck
@@ -20,4 +23,12 @@ public class Deck {
 		System.out.println();
 	}
 
+	public Card dealCard() {
+		Card c = null;
+		if (!cards.isEmpty()) {
+			c = cards.get(cards.size() -1);
+			cards.remove(c);
+		}
+		return c;
+	}
 }

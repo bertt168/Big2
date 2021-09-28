@@ -9,7 +9,7 @@ public class Big2 {
 
     private Deck deck = new Deck();
 
-    private final List<Player> players = new ArrayList<Player>();
+    private final List<Player> players = new ArrayList<Player>(PLAYER_SIZE);
 
     public static CardPattern topPlay;
 
@@ -46,19 +46,23 @@ public class Big2 {
     private void dealing() {
         for (int i = deck.FULL_DECK_SIZE; i > 0; i--) {
             Player player = players.get(i % PLAYER_SIZE);
-            player.handCard.cards.add(deck.cards.get(i-1));
-            if (deck.cards.get(i-1).suit().equals(Suit.C) && deck.cards.get(i-1).rank().equals(Rank.THREE)) {
+            Card card = deck.dealCard();
+            if (isDealCardEqualsSpade3(card)) {
                 player.hasSpade3 = true;
             }
+            player.handCard.addHandCard(card);
         }
     }
 
+    private boolean isDealCardEqualsSpade3(Card card) {
+        return card.suit().equals(Suit.C) && card.rank().equals(Rank.THREE);
+    }
+
     private void createPlayerList() {
-        for (int i = 0; i < PLAYER_SIZE; i++) {
-            Player player = new Player();
-			System.out.println("What is the Player'" + (i+1) + "s name?");
-			player.name = scanner.nextLine();
-			player.playerId = i;
+        for (int id = 0; id < PLAYER_SIZE; id++) {
+			System.out.println("What is the Player'" + (id+1) + "s name?");
+            String name = scanner.nextLine();
+            Player player = new Player(id , name);
             players.add(player);
         }
     }

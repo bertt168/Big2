@@ -12,12 +12,11 @@ public class Round {
     }
 
     public <T> void start(List<Player> players) {
-        System.out.println("New round begins.");System.out.println();
+        System.out.println("New round begins.");
         while(true) {
             setCurrentPlayer(players);
             int nextPlayerId = currentPlayer.playerId == (Big2.PLAYER_SIZE - 1) ? 0 : (currentPlayer.playerId + 1);
             setNextPlayer(players, nextPlayerId);
-            System.out.println("Next turn: " + nextPlayer.name);
 
             currentPlayer.handCard.sortedCards();
             printCurrentPlayerHandCard(currentPlayer);
@@ -29,15 +28,14 @@ public class Round {
                 Big2.noWinner = false;
                 break;
             }
-            boolean end = end();
-            if (end) {
+            if (isEndRound()) {
                 break;
             }
             isNewRound = false;
         }
     }
 
-    private boolean end() {
+    private boolean isEndRound() {
         return Big2.topPlayer == nextPlayer;
     }
 
@@ -51,7 +49,7 @@ public class Round {
     }
 
     private boolean isWinner(Player player) {
-        if (player.handCard.cards.isEmpty())
+        if (player.handCard.isEmpty())
             return true;
         else
             return false;
@@ -64,7 +62,6 @@ public class Round {
         } else {
             Big2.setTopPlay(((Play) action).cardPattern);
             Big2.setTopPlayer(currentPlayer);
-            System.out.println();
             System.out.print("Player <" + currentPlayer.name + "> plays a <" + ((Play) action).cardPattern.getName() + ">");
             for (Card c : ((Play) action).cardPattern.cards) {
                 System.out.print(" <" + c.suit() + ">[" + c.rank().getValue() + "]");
@@ -78,7 +75,7 @@ public class Round {
     }
 
     private void printCurrentPlayerHandCard(Player player) {
-        System.out.println("now player : " + player.name);
+        System.out.println("Next turn: " + player.name);
         int i = 0;
         for (Card c : player.handCard.cards) {
             if (c.rank().equals(Rank.TEN))
